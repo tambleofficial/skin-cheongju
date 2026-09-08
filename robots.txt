@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://skin-cheongju.pages.dev/sitemap.xml

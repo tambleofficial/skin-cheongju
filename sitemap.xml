@@ -1,3 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 배포 준비 파일: node prepare-seo.mjs 실행 시 실제 주소로 준비됩니다. -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://skin-cheongju.pages.dev/about</loc></url>
+  <url><loc>https://skin-cheongju.pages.dev/contact</loc></url>
+  <url><loc>https://skin-cheongju.pages.dev/</loc></url>
+  <url><loc>https://skin-cheongju.pages.dev/portfolio</loc></url>
+  <url><loc>https://skin-cheongju.pages.dev/service</loc></url>
+  <url><loc>https://skin-cheongju.pages.dev/blog</loc></url>
+<!-- 새 글의 실제 URL을 url/loc 항목으로 추가합니다. 인증 파일은 추가하지 않습니다. -->
+</urlset>

@@ -8,3 +8,6 @@ html{scroll-padding-bottom:110px}body{padding-bottom:0}h1{overflow-wrap:anywhere
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 
 .mobile-contact a:first-child{flex-direction:column;gap:2px}.mobile-contact strong{white-space:nowrap;font-weight:600}.mobile-contact span{font-size:12px}
+
+/* 블로그 글과 여섯 번째 메뉴 대응 */
+.nav{flex-wrap:wrap}.blog-article{max-width:820px;margin:auto;overflow-wrap:anywhere}.blog-article p,.blog-article ul,.blog-article ol{margin:1.25rem 0}.blog-article h2{margin-top:2.5rem}.blog-article img{max-width:100%;height:auto}.blog-article a{text-decoration:underline}
