@@ -1,0 +1,86 @@
+[
+  {
+    "filename": "serum-white.jpg",
+    "id": 4735943,
+    "source": "https://www.pexels.com/photo/white-serum-bottle-on-white-surface-4735943/",
+    "download": "https://images.pexels.com/photos/4735943/pexels-photo-4735943.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "https://kaboompics.com/",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/4735943/pexels-photo-4735943.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/serum-white.webp",
+    "alt": "화이트 세럼 용기 제품 연출 이미지"
+  },
+  {
+    "filename": "cream-botanical.jpg",
+    "id": 6690236,
+    "source": "https://www.pexels.com/photo/cream-in-a-jar-6690236/",
+    "download": "https://images.pexels.com/photos/6690236/pexels-photo-6690236.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "Tara Winstead",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/6690236/pexels-photo-6690236.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/cream-botanical.webp",
+    "alt": "크림과 식물 소품 연출 이미지"
+  },
+  {
+    "filename": "cream-silk.jpg",
+    "id": 19644201,
+    "source": "https://www.pexels.com/photo/close-up-of-a-jar-of-cream-19644201/",
+    "download": "https://images.pexels.com/photos/19644201/pexels-photo-19644201.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "Absin",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/19644201/pexels-photo-19644201.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/cream-silk.webp",
+    "alt": "크림 용기와 부드러운 소재 연출 이미지"
+  },
+  {
+    "filename": "towels.jpg",
+    "id": 17428224,
+    "source": "https://www.pexels.com/photo/rolled-white-towels-17428224/",
+    "download": "https://images.pexels.com/photos/17428224/pexels-photo-17428224.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "Dmitriy Steinke",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/17428224/pexels-photo-17428224.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/towels.webp",
+    "alt": "정돈된 화이트 타월 분위기 이미지"
+  },
+  {
+    "filename": "interior.jpg",
+    "id": 32103607,
+    "source": "https://www.pexels.com/photo/minimalist-interior-with-white-vase-and-textured-walls-32103607/",
+    "download": "https://images.pexels.com/photos/32103607/pexels-photo-32103607.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "Pavel Morillo",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/32103607/pexels-photo-32103607.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/interior.webp",
+    "alt": "화이트 화병과 벽면 공간 연출 이미지"
+  },
+  {
+    "filename": "flowers.jpg",
+    "id": 31212419,
+    "source": "https://www.pexels.com/photo/minimalist-baby-s-breath-in-white-vase-31212419/",
+    "download": "https://images.pexels.com/photos/31212419/pexels-photo-31212419.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "Miff Ibra",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/31212419/pexels-photo-31212419.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/flowers.webp",
+    "alt": "흰색 화병과 꽃 분위기 이미지"
+  },
+  {
+    "filename": "floral-light.jpg",
+    "id": 18207379,
+    "source": "https://www.pexels.com/photo/tiny-white-flowers-in-glass-vase-on-18207379/",
+    "download": "https://images.pexels.com/photos/18207379/pexels-photo-18207379.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "photographer": "Dũng Phạm",
+    "license": "https://www.pexels.com/license/",
+    "status": "브라우저 표시 및 인물 없는 사진 내용 확인. 로컬 다운로드 미완료; 배포 빌드 다운로드 대상.",
+    "webp_url": "https://images.pexels.com/photos/18207379/pexels-photo-18207379.jpeg?fm=webp&w=1600&q=85",
+    "local_file": "assets/images/floral-light.webp",
+    "alt": "유리 화병과 작은 흰 꽃 분위기 이미지"
+  }
+]
