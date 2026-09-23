@@ -3,8 +3,116 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>더리파인 블로그 | 브랜드 이야기·공간·방문 안내</title>
-<meta name="description" content="더리파인 블로그. 브랜드의 관리 관점, 실제 공간 이야기와 첫 방문 안내를 읽어보세요.">
+<!-- Blog carousel: competitor-style loop/autoplay interaction, implemented locally and isolated to blog.html. -->
+<style id="refine-blog-carousel-css">
+.journal-index.journal-carousel{display:block;position:relative;overflow:visible;padding-bottom:90px}
+.journal-carousel .rc-viewport{overflow:hidden;width:100%;touch-action:pan-y;cursor:grab}
+.journal-carousel .rc-viewport.is-dragging{cursor:grabbing}
+.journal-carousel .rc-track{--rc-gap:30px;--rc-view:3;display:flex;gap:var(--rc-gap);will-change:transform;transform:translate3d(0,0,0)}
+.journal-carousel .journal-card{flex:0 0 calc((100% - (var(--rc-gap) * (var(--rc-view) - 1))) / var(--rc-view));min-width:0;display:flex;flex-direction:column}
+.journal-carousel .journal-card>b{margin-top:auto;width:max-content}
+.journal-carousel .rc-controls{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:34px;border-top:1px solid var(--line);padding-top:18px}
+.journal-carousel .rc-dots{display:flex;align-items:center;gap:7px;min-width:0}
+.journal-carousel .rc-dot{appearance:none;border:0;padding:0;width:26px;height:2px;background:rgba(12,18,35,.18);cursor:pointer;transition:width .28s ease,background .28s ease}
+.journal-carousel .rc-dot.is-active{width:52px;background:var(--blue)}
+.journal-carousel .rc-nav{display:flex;gap:8px;flex:0 0 auto}
+.journal-carousel .rc-btn{appearance:none;width:48px;height:48px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:20px;line-height:1;cursor:pointer;transition:background .22s ease,color .22s ease,border-color .22s ease}
+.journal-carousel .rc-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.journal-carousel .rc-btn:focus-visible,.journal-carousel .rc-dot:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.journal-carousel .rc-status{font-size:10px;letter-spacing:.14em;color:var(--muted);white-space:nowrap}
+@media(max-width:900px){.journal-carousel .rc-track{--rc-gap:20px;--rc-view:2}.journal-index.journal-carousel{padding-bottom:75px}}
+@media(max-width:650px){.journal-carousel .rc-track{--rc-gap:14px;--rc-view:1}.journal-index.journal-carousel{padding-bottom:65px}.journal-carousel .rc-controls{margin-top:24px;align-items:flex-end}.journal-carousel .rc-btn{width:44px;height:44px}.journal-carousel .rc-dot{width:18px}.journal-carousel .rc-dot.is-active{width:38px}.journal-carousel .rc-status{display:none}}
+@media(prefers-reduced-motion:reduce){.journal-carousel .rc-track,.journal-carousel .rc-dot,.journal-carousel .rc-btn{transition:none!important}}
+</style>
+<script id="refine-blog-carousel-js">
+window.addEventListener('DOMContentLoaded',function(){
+  var root=document.querySelector('[data-journal-carousel]');
+  if(!root||root.dataset.carouselReady==='1')return;
+  var originals=Array.prototype.slice.call(root.querySelectorAll(':scope > .journal-card'));
+  if(originals.length<2)return;
+  root.dataset.carouselReady='1';
+
+  var viewport=document.createElement('div');
+  viewport.className='rc-viewport';
+  viewport.setAttribute('aria-label','더리파인 블로그 글 캐러셀');
+  viewport.setAttribute('aria-roledescription','carousel');
+  var track=document.createElement('div');
+  track.className='rc-track';
+  viewport.appendChild(track);
+
+  function cloneCard(card){
+    var c=card.cloneNode(true);
+    c.setAttribute('aria-hidden','true');
+    c.setAttribute('tabindex','-1');
+    c.querySelectorAll('a,button,[tabindex]').forEach(function(el){el.setAttribute('tabindex','-1')});
+    return c;
+  }
+  originals.forEach(function(card){track.appendChild(cloneCard(card))});
+  originals.forEach(function(card){track.appendChild(card)});
+  originals.forEach(function(card){track.appendChild(cloneCard(card))});
+  root.prepend(viewport);
+
+  var controls=document.createElement('div');
+  controls.className='rc-controls';
+  var dots=document.createElement('div');dots.className='rc-dots';dots.setAttribute('role','group');dots.setAttribute('aria-label','글 선택');
+  originals.forEach(function(_,i){
+    var b=document.createElement('button');b.type='button';b.className='rc-dot';b.setAttribute('aria-label',(i+1)+'번째 글 보기');
+    b.addEventListener('click',function(){goTo(base+i,true)});dots.appendChild(b);
+  });
+  var status=document.createElement('span');status.className='rc-status';
+  var nav=document.createElement('div');nav.className='rc-nav';
+  var prev=document.createElement('button');prev.type='button';prev.className='rc-btn';prev.setAttribute('aria-label','이전 글');prev.textContent='←';
+  var next=document.createElement('button');next.type='button';next.className='rc-btn';next.setAttribute('aria-label','다음 글');next.textContent='→';
+  nav.append(prev,next);controls.append(dots,status,nav);root.appendChild(controls);
+
+  var total=originals.length,base=total,index=base,step=0,animating=false,timer=null;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function activeIndex(){return ((index-base)%total+total)%total}
+  function measure(){
+    var card=track.querySelector('.journal-card');if(!card)return;
+    var styles=getComputedStyle(track);var gap=parseFloat(styles.columnGap||styles.gap||0)||0;
+    step=card.getBoundingClientRect().width+gap;
+    goTo(index,false);
+  }
+  function renderMeta(){
+    var a=activeIndex();
+    Array.prototype.forEach.call(dots.children,function(dot,i){dot.classList.toggle('is-active',i===a);dot.setAttribute('aria-current',i===a?'true':'false')});
+    status.textContent=String(a+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+  }
+  function goTo(nextIndex,animate){
+    if(!step)measure();
+    index=nextIndex;animating=!!animate;
+    track.style.transition=animate?'transform 680ms cubic-bezier(.22,.72,.18,1)':'none';
+    track.style.transform='translate3d('+(-index*step)+'px,0,0)';
+    renderMeta();
+  }
+  function normalize(){
+    if(index>=base+total){index-=total;goTo(index,false)}
+    else if(index<base){index+=total;goTo(index,false)}
+    animating=false;
+  }
+  track.addEventListener('transitionend',normalize);
+  function move(delta){if(animating)return;goTo(index+delta,true);restart()}
+  prev.addEventListener('click',function(){move(-1)});next.addEventListener('click',function(){move(1)});
+  root.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}if(e.key==='ArrowRight'){e.preventDefault();move(1)}});
+
+  var down=false,startX=0,startY=0,dragX=0;
+  viewport.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;down=true;startX=e.clientX;startY=e.clientY;dragX=0;viewport.classList.add('is-dragging');stop();try{viewport.setPointerCapture(e.pointerId)}catch(_){}});
+  viewport.addEventListener('pointermove',function(e){if(!down)return;var dx=e.clientX-startX,dy=e.clientY-startY;if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>12)return;dragX=dx;track.style.transition='none';track.style.transform='translate3d('+((-index*step)+dx)+'px,0,0)'});
+  function release(e){if(!down)return;down=false;viewport.classList.remove('is-dragging');try{viewport.releasePointerCapture(e.pointerId)}catch(_){}var threshold=Math.min(85,step*.18);if(Math.abs(dragX)>threshold)goTo(index+(dragX<0?1:-1),true);else goTo(index,true);dragX=0;start()}
+  viewport.addEventListener('pointerup',release);viewport.addEventListener('pointercancel',release);
+
+  function stop(){if(timer){clearInterval(timer);timer=null}}
+  function start(){if(reduced)return;stop();timer=setInterval(function(){if(!document.hidden)move(1)},4600)}
+  function restart(){stop();start()}
+  root.addEventListener('mouseenter',stop);root.addEventListener('mouseleave',start);root.addEventListener('focusin',stop);root.addEventListener('focusout',function(e){if(!root.contains(e.relatedTarget))start()});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else start()});
+  window.addEventListener('resize',function(){clearTimeout(window.__refineCarouselResize);window.__refineCarouselResize=setTimeout(measure,120)},{passive:true});
+  measure();renderMeta();start();
+});
+</script>
+<title>청주 가경동 피부관리 블로그 | 윤곽·스킨케어·데콜테 가이드 | 더리파인</title>
+<meta name="description" content="청주 가경동 피부관리 더리파인 블로그. 윤곽관리·얼굴경락·스킨케어·데콜테·모공·아쿠아필·웨딩관리와 첫 방문 정보를 필러·클러스터 구조로 정리합니다.">
 <meta name="keywords" content="청주 가경동 피부관리, 청주 피부관리, 가경동 에스테틱, 얼굴경락, 윤곽관리, 스킨케어, 데콜테, 리프팅, 모공관리, 아쿠아필, 웨딩관리">
 <link rel="canonical" href="https://skin-cheongju.pages.dev/blog">
 <meta name="theme-color" content="#1737b8">
@@ -12,8 +120,8 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="더리파인 에스테틱">
-<meta property="og:title" content="더리파인 블로그 | 브랜드 이야기·공간·방문 안내">
-<meta property="og:description" content="더리파인 블로그. 브랜드의 관리 관점, 실제 공간 이야기와 첫 방문 안내를 읽어보세요.">
+<meta property="og:title" content="청주 가경동 피부관리 블로그 | 윤곽·스킨케어·데콜테 가이드 | 더리파인">
+<meta property="og:description" content="청주 가경동 피부관리 더리파인 블로그. 윤곽관리·얼굴경락·스킨케어·데콜테·모공·아쿠아필·웨딩관리와 첫 방문 정보를 필러·클러스터 구조로 정리합니다.">
 <meta property="og:url" content="https://skin-cheongju.pages.dev/blog">
 <meta property="og:image" content="https://skin-cheongju.pages.dev/assets/images/og-the-refine.jpg">
 <meta property="og:image:width" content="1200">
@@ -26,7 +134,7 @@
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="assets/pages-extension.css">
 <script src="assets/site.js" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BeautySalon", "@id": "https://skin-cheongju.pages.dev/#business", "name": "더리파인 에스테틱", "alternateName": "THE RE:FINE", "url": "https://skin-cheongju.pages.dev/", "telephone": "0507-1314-8454", "image": "https://skin-cheongju.pages.dev/assets/images/og-the-refine.jpg", "description": "청주 가경동에서 피부 컨디션과 얼굴 골격·근육 양상을 바탕으로 퍼스널 페이스 큐레이션을 제공하는 프라이빗 에스테틱.", "address": {"@type": "PostalAddress", "streetAddress": "충북 청주시 흥덕구 2순환로1219번길 30 힐스테이트센트럴2차 힐스에비뉴 지상2층 226호", "addressLocality": "청주시", "addressRegion": "충청북도", "postalCode": "", "addressCountry": "KR"}, "areaServed": {"@type": "City", "name": "청주시"}, "sameAs": ["https://www.instagram.com/the.refine_", "https://map.naver.com/p/entry/place/2037698163"], "hasMap": "https://map.naver.com/p/entry/place/2037698163", "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "10:00", "closes": "20:00"}, {"@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "17:00"}], "makesOffer": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": "얼굴경락·윤곽관리"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "스킨케어"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "데콜테 케어"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "웨딩·신부관리"}}]}, {"@type": "WebSite", "@id": "https://skin-cheongju.pages.dev/#website", "url": "https://skin-cheongju.pages.dev/", "name": "청주 가경동 피부관리 · 더리파인", "alternateName": "더리파인 에스테틱", "inLanguage": "ko-KR", "publisher": {"@id": "https://skin-cheongju.pages.dev/#business"}}, {"@type": "WebPage", "@id": "https://skin-cheongju.pages.dev/blog#webpage", "url": "https://skin-cheongju.pages.dev/blog", "name": "더리파인 블로그 | 브랜드 이야기·공간·방문 안내", "description": "더리파인 블로그. 브랜드의 관리 관점, 실제 공간 이야기와 첫 방문 안내를 읽어보세요.", "inLanguage": "ko-KR", "isPartOf": {"@id": "https://skin-cheongju.pages.dev/#website"}, "about": {"@id": "https://skin-cheongju.pages.dev/#business"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://skin-cheongju.pages.dev/blog#webpage","url":"https://skin-cheongju.pages.dev/blog","name":"청주 가경동 피부관리 블로그 | 더리파인","description":"윤곽관리·얼굴경락·스킨케어·데콜테와 첫 방문 정보를 필러·클러스터 구조로 정리한 더리파인 블로그.","inLanguage":"ko-KR"},{"@type":"ItemList","name":"더리파인 피부관리 가이드 글","itemListElement":[{"@type":"ListItem","position":1,"url":"https://skin-cheongju.pages.dev/blog-cheongju-gagyeong-skincare-guide","name":"청주 가경동 피부관리 가이드: 윤곽관리·얼굴경락·스킨케어·데콜테 선택 기준"},{"@type":"ListItem","position":2,"url":"https://skin-cheongju.pages.dev/blog-face-line-gyeongrak-contour-guide","name":"얼굴경락과 윤곽관리, 무엇이 다를까? 가경동 피부관리 상담 전 체크포인트"},{"@type":"ListItem","position":3,"url":"https://skin-cheongju.pages.dev/blog-pore-aquapeel-skincare-guide","name":"모공·아쿠아필·압출 스킨케어, 피부 컨디션에 따라 어떻게 선택할까"},{"@type":"ListItem","position":4,"url":"https://skin-cheongju.pages.dev/blog-decollete-wedding-care-guide","name":"데콜테 관리와 웨딩 신부관리: 얼굴선과 목·어깨 라인을 함께 보는 이유"},{"@type":"ListItem","position":5,"url":"https://skin-cheongju.pages.dev/blog-gagyeong-first-visit-parking-guide","name":"청주 가경동 피부관리 첫 방문 가이드: 예약·상담·주차·찾아오는 길"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#main">본문 바로가기</a>
@@ -43,7 +151,7 @@
     </div>
   </div>
 </header>
-<main id="main"><section class="page-title shell"><span class="eyebrow">THE RE:FINE JOURNAL</span><h1>더리파인의 이야기,<br><span class="accent">일상의 기록.</span></h1><p class="lead">브랜드 이야기와 공간 소식, 방문에 도움이 되는 안내를 전합니다.</p></section><section class="shell journal-index" aria-label="블로그 글 목록"><a class="journal-card" href="#personal-care"><img src="assets/images/care-bed.webp" alt="프라이빗 관리 베드" width="1350" height="1800" loading="lazy"><span>BRAND NOTE</span><h2>정해진 코스보다, 한 사람을 먼저 보는 이유</h2><p>피부와 얼굴선의 상태를 함께 살피는 더리파인의 관리 관점.</p><b>글 읽기 ↗</b></a><a class="journal-card" href="#quiet-space"><img src="assets/images/consult-room.webp" alt="더리파인 상담 공간" width="1350" height="1800" loading="lazy"><span>SPACE NOTE</span><h2>머무르는 시간도 관리의 일부가 되도록</h2><p>상담부터 관리, 마무리까지 이어지는 더리파인의 공간.</p><b>글 읽기 ↗</b></a><a class="journal-card" href="#first-visit"><img src="assets/images/reception.webp" alt="더리파인 리셉션" width="1350" height="1800" loading="lazy"><span>VISIT NOTE</span><h2>처음 방문하는 더리파인, 어디부터 살펴볼까요?</h2><p>프로그램 탐색부터 공간 확인, 예약까지 간단한 안내.</p><b>글 읽기 ↗</b></a></section><section class="shell journal-articles" aria-label="블로그 글 본문"><article id="personal-care"><span class="eyebrow">BRAND NOTE</span><h2>정해진 코스보다, 한 사람을 먼저 보는 이유</h2><p>더리파인은 관리 프로그램을 고르기 전에 어떤 부분이 신경 쓰이는지 먼저 이야기합니다. 피부의 컨디션과 원하는 관리 방향을 함께 알아가는 시간이 출발점입니다.</p><p>같은 이름의 프로그램이라도 관심 부위와 방문 목적은 다를 수 있습니다. 피부와 얼굴선의 상태를 살피고, 상담을 바탕으로 필요한 관리의 구성과 순서를 조율합니다.</p><p>처음 방문하신다면 관심 있는 관리와 궁금한 점을 편하게 말씀해 주세요. 프로그램의 상세 내용은 Service에서, 관리의 기본 관점은 Guide에서 확인하실 수 있습니다.</p><a class="text-link" href="#main">목록으로 돌아가기 <span>↑</span></a></article><article id="quiet-space"><span class="eyebrow">SPACE NOTE</span><h2>머무르는 시간도 관리의 일부가 되도록</h2><p>더리파인의 공간은 화이트와 브랜드 블루를 중심으로 구성되어 있습니다. 상담 공간에서 이야기를 나누고, 프라이빗 케어룸으로 이동하는 흐름을 사진으로 만나보실 수 있습니다.</p><p>케어룸뿐 아니라 리셉션, 제품 진열 공간과 파우더 공간도 매장의 분위기를 만듭니다. 방문 전 공간을 둘러보고 싶으시다면 Space의 실제 매장 사진을 참고해 주세요.</p><p>찾아오시는 주소와 운영시간, 주차 안내는 Contact에 정리되어 있습니다.</p><a class="text-link" href="#main">목록으로 돌아가기 <span>↑</span></a></article><article id="first-visit"><span class="eyebrow">VISIT NOTE</span><h2>처음 방문하는 더리파인, 어디부터 살펴볼까요?</h2><p>어떤 관리가 있는지 궁금하다면 Service부터 살펴보세요. 얼굴경락·윤곽관리, 스킨케어, 데콜테·웨딩관리의 안내를 확인할 수 있습니다.</p><p>관리를 바라보는 기준이 궁금하다면 Guide를, 매장 분위기가 궁금하다면 Space를 추천합니다. Portfolio에서는 앞으로 공개할 관리 사례와 기록을 소개합니다.</p><p>방문을 계획하셨다면 Contact에서 위치와 운영시간을 확인한 뒤 네이버 예약 또는 전화 상담으로 연결하실 수 있습니다.</p><a class="text-link" href="#main">목록으로 돌아가기 <span>↑</span></a></article></section><section class="shell journal-crosslink"><h2>관리의 기본 관점이 궁금하다면</h2><a class="btn primary" href="guide.html">관리 가이드 보기 ↗</a></section></main>
+<main id="main"><section class="page-title shell"><span class="eyebrow">THE RE:FINE JOURNAL</span><h1>청주 가경동 피부관리,<br><span class="accent">필요한 기준을 읽다.</span></h1><p class="lead">윤곽관리·얼굴경락·스킨케어·데콜테부터 첫 방문까지, 하나의 필러와 연결된 클러스터 글로 정리했습니다.</p></section><section class="shell journal-index journal-carousel" data-journal-carousel aria-label="블로그 글 목록" tabindex="0"><a class="journal-card" href="blog-cheongju-gagyeong-skincare-guide.html"><img src="assets/images/care-bed.webp" alt="더리파인 프라이빗 관리 베드" width="1350" height="1800" loading="lazy"><span>PILLAR GUIDE</span><h2>청주 가경동 피부관리 가이드: 윤곽관리·얼굴경락·스킨케어·데콜테 선택 기준</h2><p>윤곽관리, 얼굴경락, 스킨케어, 데콜테를 따로 보지 않고 현재 피부와 얼굴선에 맞춰 선택하는 기준을 정리했습니다.</p><b>글 읽기 ↗</b></a><a class="journal-card" href="blog-face-line-gyeongrak-contour-guide.html"><img src="assets/images/treatment-room.webp" alt="더리파인 프라이빗 윤곽관리 공간" width="1350" height="1800" loading="lazy"><span>FACE LINE</span><h2>얼굴경락과 윤곽관리, 무엇이 다를까? 가경동 피부관리 상담 전 체크포인트</h2><p>강한 압박보다 골격·근육·근막의 흐름을 먼저 보는 얼굴선 관리의 기준을 정리했습니다.</p><b>글 읽기 ↗</b></a><a class="journal-card" href="blog-pore-aquapeel-skincare-guide.html"><img src="assets/images/products.webp" alt="더리파인 스킨케어 제품과 관리 공간" width="1350" height="1800" loading="lazy"><span>SKIN CARE</span><h2>모공·아쿠아필·압출 스킨케어, 피부 컨디션에 따라 어떻게 선택할까</h2><p>모공, 피지, 각질이 신경 쓰일 때 관리 이름보다 현재 피부 상태를 먼저 봐야 하는 이유를 정리했습니다.</p><b>글 읽기 ↗</b></a><a class="journal-card" href="blog-decollete-wedding-care-guide.html"><img src="assets/images/vanity.webp" alt="더리파인 웨딩 신부관리와 데콜테 케어를 위한 파우더 공간" width="1350" height="1800" loading="lazy"><span>DÉCOLLETÉ</span><h2>데콜테 관리와 웨딩 신부관리: 얼굴선과 목·어깨 라인을 함께 보는 이유</h2><p>웨딩·촬영 전 얼굴만이 아니라 목, 어깨, 쇄골 라인까지 함께 상담하는 이유와 일정 준비 팁을 정리했습니다.</p><b>글 읽기 ↗</b></a><a class="journal-card" href="blog-gagyeong-first-visit-parking-guide.html"><img src="assets/images/reception.webp" alt="청주 가경동 더리파인 에스테틱 리셉션" width="1350" height="1800" loading="lazy"><span>LOCAL GUIDE</span><h2>청주 가경동 피부관리 첫 방문 가이드: 예약·상담·주차·찾아오는 길</h2><p>더리파인 첫 방문 전 알아두면 좋은 상담 준비, 힐스에비뉴 주차와 커넥트현대·고속터미널 연결 동선을 정리했습니다.</p><b>글 읽기 ↗</b></a></section><section class="shell journal-crosslink"><h2>전체 관리의 기본 관점이 궁금하다면</h2><a class="btn primary" href="guide.html">관리 가이드 보기 ↗</a></section></main>
 <footer class="site-footer">
   <div class="shell-wide footer-top"><div class="footer-mark"><img src="assets/images/the-refine-logo.webp" alt="" width="1280" height="1280"><div><strong>THE RE:FINE</strong><span>당신의 가장 아름다운 페이스 라인을 설계하다</span></div></div><a class="footer-book" href="https://map.naver.com/p/entry/place/2037698163" target="_blank" rel="noopener noreferrer">BOOK YOUR CARE <b>↗</b></a></div>
   <div class="shell-wide footer-grid"><div><span>ADDRESS</span><p>충북 청주시 흥덕구 2순환로1219번길 30<br>힐스에비뉴 2층 226호</p></div><div><span>CONTACT</span><p><a href="tel:050713148454">0507-1314-8454</a><br><a href="https://www.instagram.com/the.refine_" target="_blank" rel="noopener noreferrer">Instagram @the.refine_</a></p></div><div><span>MENU</span><p><a href="about.html">About</a> · <a href="service.html">Service</a> · <a href="portfolio.html">Portfolio</a> · <a href="space.html">Space</a> · <a href="guide.html">Guide</a> · <a href="blog.html">Blog</a> · <a href="contact.html">Contact</a></p></div></div>
