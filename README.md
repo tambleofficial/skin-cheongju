@@ -1,68 +1,50 @@
-# THE RE:FINE — V5 Interactive Brand Renewal
+# THE RE:FINE — Editorial Renewal
 
-정식 런칭용 더리파인 에스테틱 리뉴얼 버전입니다.
+## GitHub + Cloudflare Pages 배포
+1. 압축 해제 후 index.html과 assets 폴더 등이 GitHub 저장소 최상위에 위치하도록 업로드합니다. ZIP 파일 자체를 업로드하는 방식이 아닙니다.
+2. Cloudflare Pages에서 해당 GitHub 저장소를 연결합니다.
+3. 설정: Framework preset = None / Build command = node prepare-seo.mjs / Build output directory = public / Root directory = 공란.
+4. 배포 URL을 확인합니다. 이후 GitHub push 시 다시 배포됩니다.
+별도 npm 설치, API 키, 환경변수는 필요 없습니다. 기존 node prepare-seo.mjs / public 설정과 호환됩니다.
+공식 안내: https://developers.cloudflare.com/pages/get-started/git-integration/
+https://developers.cloudflare.com/pages/framework-guides/deploy-anything/
 
-## 이번 리뉴얼 방향
+## 페이지
+메인 index.html
+기존 세부페이지 5개 유지: about.html, service.html, portfolio.html, contact.html, blog.html
+404, 사이트맵, RSS, 네이버 인증 파일 유지. 중복 미리보기 index-local.html / test.html 제외.
 
-- 경쟁사 페이지의 **인터랙션 원리만 참고**하고 레이아웃·색감·카피·그래픽은 더리파인 브랜드 기준으로 새로 설계했습니다.
-- 브랜드 컬러: Deep Navy / Refine Cobalt / Warm Ivory
-- 서체: Wanted Sans Variable CDN + 시스템 산세리프 폴백
-- 명조·필기체·이탤릭 사용 없음
+## 변경 사항
+메인 HTML 및 메인 전용 assets/home.css, assets/home.js 새로 제작.
+네이비·코발트·아이보리와 기존 매장 사진 유지.
+아치형 히어로, 비대칭 소개, 프로그램 아코디언과 이미지 연동, 공간 갤러리, 예약 안내.
+메인 Three.js 의존성을 제거하고 선택·드래그·스크롤 인터랙션 적용.
+키보드 탐색, 모바일 스와이프, 동작 줄이기 설정 지원.
+세부페이지 5개와 기존 공통 CSS/JS 원본 유지.
 
-## 핵심 인터랙션
+## 수정 위치
+문구/연락처: 각 HTML. 메인 디자인: assets/home.css. 상호작용: assets/home.js.
+사진: assets/images. 프로그램 사진: index.html의 details data-image 속성.
+프로그램 링크: service.html#face / #skin / #decollete.
 
-1. Hero Three.js
-   - 얼굴선을 추상화한 다층 contour sculpture
-   - orbital ribbon / particle atmosphere / glass core
-   - pointer movement / drag / scroll 반응
-   - 실제 매장 사진 3장 자동 크로스페이드
+## 도메인
+원본 https://skin-cheongju.pages.dev 유지.
+다른 도메인 사용 시 HTML canonical/OG/JSON-LD, sitemap.xml, robots.txt, rss.xml, seo-config.json의 해당 주소를 변경하세요.
+prepare-seo.mjs는 정적 파일 복사 전용이며 도메인을 자동 치환하지 않습니다.
 
-2. Kinetic typography
-   - PERSONAL / CURATION / RE:FINE 대형 타이포가 스크롤 위치에 따라 서로 다른 속도로 이동
-
-3. Curated Care Index
-   - 프로그램 행 hover 시 실제 매장 이미지가 커서를 따라다니는 preview
-   - 모바일에서는 hover UI를 제거하고 링크 중심으로 단순화
-
-4. Process Morph Lab
-   - 두 번째 Three.js scene
-   - ANALYZE → SEQUENCE → REFINE 단계에 맞춰 3D particle form이 실시간 morph
-   - 스크롤에 따라 단계 자동 활성화
-
-5. Spatial Gallery
-   - drag / swipe 가능한 실제 공간 이미지 rail
-   - 모바일 scroll-snap 대응
-
-6. Responsive system
-   - 900px / 560px 기준 별도 모바일 레이아웃
-   - 하단 전화/예약 quick action
-   - viewport safe-area 대응
-   - `word-break: keep-all` 기반 한글 단어 분리 방지
-   - `prefers-reduced-motion` 대응
-
-## 배포
-
-압축을 풀었을 때 아래 파일이 웹 루트에 위치하면 됩니다.
-
-- index.html
-- about.html
-- service.html
-- portfolio.html
-- contact.html
-- blog.html
-- assets/
-
-Three.js는 jsDelivr CDN을 사용합니다. CDN을 사용할 수 없는 환경에서도 기본 레이아웃과 실제 매장 사진은 그대로 노출되도록 fallback 처리되어 있습니다.
+## 디자인 출처
+경쟁사 HTML은 콘텐츠 구획과 탐색 방식 참고에만 사용.
+경쟁사 코드·문구·로고·사진은 배포본에 포함하지 않았습니다.
+메인 배치 및 CSS/JS는 새로 작성했습니다.
+기존 사진 및 폰트 출처는 PHOTO-CREDITS.txt, image-sources.json, assets/style.css 참고.
 
 ## 검증
-
-- JavaScript `node --check` 통과
-- CSS `tinycss2` parse error 0
-- CSS 중괄호 pair 검증 완료
-- HTML 로컬 asset/link 누락 0
-- 중복 id 검사 완료
-
-## SEO
-
-기존 청주 가경동 피부관리 중심 title / description / schema / sitemap 구조를 유지했습니다.
-정식 도메인 연결 시 canonical, og:url, sitemap.xml 내 `skin-cheongju.pages.dev` 주소를 실제 도메인으로 변경하세요.
+- JavaScript 구문 검사 통과, 브라우저 실행 오류 없음.
+- 320 / 390 / 768 / 1024 / 1440px 가로 넘침 없음.
+- 모바일 메뉴 열기 및 Escape 닫기 확인.
+- 프로그램 선택 후 사진 전환 확인.
+- 로컬 파일·링크·앵커 누락 및 중복 ID 없음.
+- 기존 세부페이지 5개 및 공통 CSS/JS 원본 바이트 동일.
+- prepare-seo.mjs 빌드 완료 확인.
+- preview 폴더에 PC·모바일 첫 화면 미리보기 포함 (빌드 산출물에서는 제외).
+- 서체는 원본 Wanted Sans CDN 설정 유지. 검증 환경에서는 동일 폰트 파일을 내려받아 표시 확인.
