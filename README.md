@@ -1,25 +1,68 @@
-# 더리파인 V4 — Three.js / 모바일 최적화 리디자인
+# THE RE:FINE — V5 Interactive Brand Renewal
 
-이번 버전은 이전 CSS 패치 누적 방식을 버리고 `assets/style.css`를 처음부터 하나의 스타일 시스템으로 다시 작성했습니다.
+정식 런칭용 더리파인 에스테틱 리뉴얼 버전입니다.
 
-## 핵심 수정
-- CSS 전면 재작성: 중복 미디어쿼리/상충 규칙 제거
-- 모바일 820px / 560px 브레이크포인트 전용 레이아웃 재설계
-- `word-break: keep-all`, 균형형 타이포, 모바일 전용 줄바꿈으로 한글 글자 중간 분리 최소화
-- 홈 마퀴를 동일 그룹 2개가 이어지는 실제 무한 루프 구조로 변경
-- Three.js 히어로 강화
-  - 32~48겹 페이스 라인 컨투어
-  - 3개의 3D orbital ribbon
-  - 반투명 glass core + wireframe shell
-  - 데스크톱 1,800 / 모바일 850 particle field
-  - orbiting nodes
-  - 마우스/드래그/스크롤 반응
-  - 실제 더리파인 공간 사진을 Three.js shader plane으로 렌더링해 미세 왜곡/깊이감 적용
-- 모바일에서는 고비용 요소를 줄이고 HTML 실제 공간 사진을 fallback으로 유지
-- WebGL 또는 Three.js 로드 실패 시에도 기본 UI/사진이 정상 노출되는 구조
-- iPhone safe-area를 위한 `viewport-fit=cover` 적용
+## 이번 리뉴얼 방향
+
+- 경쟁사 페이지의 **인터랙션 원리만 참고**하고 레이아웃·색감·카피·그래픽은 더리파인 브랜드 기준으로 새로 설계했습니다.
+- 브랜드 컬러: Deep Navy / Refine Cobalt / Warm Ivory
+- 서체: Wanted Sans Variable CDN + 시스템 산세리프 폴백
+- 명조·필기체·이탤릭 사용 없음
+
+## 핵심 인터랙션
+
+1. Hero Three.js
+   - 얼굴선을 추상화한 다층 contour sculpture
+   - orbital ribbon / particle atmosphere / glass core
+   - pointer movement / drag / scroll 반응
+   - 실제 매장 사진 3장 자동 크로스페이드
+
+2. Kinetic typography
+   - PERSONAL / CURATION / RE:FINE 대형 타이포가 스크롤 위치에 따라 서로 다른 속도로 이동
+
+3. Curated Care Index
+   - 프로그램 행 hover 시 실제 매장 이미지가 커서를 따라다니는 preview
+   - 모바일에서는 hover UI를 제거하고 링크 중심으로 단순화
+
+4. Process Morph Lab
+   - 두 번째 Three.js scene
+   - ANALYZE → SEQUENCE → REFINE 단계에 맞춰 3D particle form이 실시간 morph
+   - 스크롤에 따라 단계 자동 활성화
+
+5. Spatial Gallery
+   - drag / swipe 가능한 실제 공간 이미지 rail
+   - 모바일 scroll-snap 대응
+
+6. Responsive system
+   - 900px / 560px 기준 별도 모바일 레이아웃
+   - 하단 전화/예약 quick action
+   - viewport safe-area 대응
+   - `word-break: keep-all` 기반 한글 단어 분리 방지
+   - `prefers-reduced-motion` 대응
 
 ## 배포
-ZIP의 내용물을 웹 루트에 그대로 업로드하세요. `index.html`과 `assets/`가 같은 레벨이어야 합니다.
 
-Three.js와 Wanted Sans는 CDN을 사용합니다. 배포 환경에서 외부 CDN 차단 정책이 있다면 해당 리소스만 별도 호스팅해야 합니다.
+압축을 풀었을 때 아래 파일이 웹 루트에 위치하면 됩니다.
+
+- index.html
+- about.html
+- service.html
+- portfolio.html
+- contact.html
+- blog.html
+- assets/
+
+Three.js는 jsDelivr CDN을 사용합니다. CDN을 사용할 수 없는 환경에서도 기본 레이아웃과 실제 매장 사진은 그대로 노출되도록 fallback 처리되어 있습니다.
+
+## 검증
+
+- JavaScript `node --check` 통과
+- CSS `tinycss2` parse error 0
+- CSS 중괄호 pair 검증 완료
+- HTML 로컬 asset/link 누락 0
+- 중복 id 검사 완료
+
+## SEO
+
+기존 청주 가경동 피부관리 중심 title / description / schema / sitemap 구조를 유지했습니다.
+정식 도메인 연결 시 canonical, og:url, sitemap.xml 내 `skin-cheongju.pages.dev` 주소를 실제 도메인으로 변경하세요.
