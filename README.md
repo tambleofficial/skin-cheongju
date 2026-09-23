@@ -1,28 +1,25 @@
-# 더리파인 에스테틱 — ULTRA 리디자인
+# 더리파인 V4 — Three.js / 모바일 최적화 리디자인
 
-이번 버전은 기존 에디토리얼/명조 방향을 폐기하고 **고딕 산세리프 + 실시간 인터랙션** 중심으로 다시 설계했습니다.
+이번 버전은 이전 CSS 패치 누적 방식을 버리고 `assets/style.css`를 처음부터 하나의 스타일 시스템으로 다시 작성했습니다.
 
-## 핵심 변경
-- 전 페이지 타이포를 `Wanted Sans Variable` 단일 산세리프 시스템으로 통일
-- 명조/손글씨/이탤릭 스타일 제거
-- 홈 히어로를 다크 네이비 기반 풀스크린 구조로 전면 재설계
-- Three.js 기반 인터랙티브 3D 페이스 라인 조형물 적용
-  - 마우스 이동 반응
-  - 드래그 관성 회전
-  - 클릭/터치 펄스
-  - 스크롤 연동 회전/개방감 변화
-- 실제 매장 사진을 히어로 플로팅 패널과 공간 갤러리에 사용
-- 버튼 마그네틱 모션, 서비스 카드 포인터 스포트라이트, 이미지 틸트, 스크롤 리빌 적용
-- 모바일에서도 3D 오브젝트가 첫 화면부터 보이도록 구성
-- 기존 SEO 제목/메타/구조화 데이터 및 매장 정보 유지
-
-## 폰트
-Wanted Sans는 SIL Open Font License로 웹사이트와 상업적 사용이 가능합니다. CSS는 CDN으로 로드하며 폰트 파일을 프로젝트에 포함하지 않습니다.
-
-## 주요 파일
-- `index.html` : 새 홈 랜딩
-- `assets/style.css` : 전체 디자인 시스템/반응형
-- `assets/site.js` : Three.js 및 인터랙션
+## 핵심 수정
+- CSS 전면 재작성: 중복 미디어쿼리/상충 규칙 제거
+- 모바일 820px / 560px 브레이크포인트 전용 레이아웃 재설계
+- `word-break: keep-all`, 균형형 타이포, 모바일 전용 줄바꿈으로 한글 글자 중간 분리 최소화
+- 홈 마퀴를 동일 그룹 2개가 이어지는 실제 무한 루프 구조로 변경
+- Three.js 히어로 강화
+  - 32~48겹 페이스 라인 컨투어
+  - 3개의 3D orbital ribbon
+  - 반투명 glass core + wireframe shell
+  - 데스크톱 1,800 / 모바일 850 particle field
+  - orbiting nodes
+  - 마우스/드래그/스크롤 반응
+  - 실제 더리파인 공간 사진을 Three.js shader plane으로 렌더링해 미세 왜곡/깊이감 적용
+- 모바일에서는 고비용 요소를 줄이고 HTML 실제 공간 사진을 fallback으로 유지
+- WebGL 또는 Three.js 로드 실패 시에도 기본 UI/사진이 정상 노출되는 구조
+- iPhone safe-area를 위한 `viewport-fit=cover` 적용
 
 ## 배포
-현재 canonical은 기존 주소 `https://skin-cheongju.pages.dev/` 기준입니다. 실제 도메인 확정 후 `seo-config.json`, canonical/OG URL, sitemap을 최종 도메인으로 교체하세요.
+ZIP의 내용물을 웹 루트에 그대로 업로드하세요. `index.html`과 `assets/`가 같은 레벨이어야 합니다.
+
+Three.js와 Wanted Sans는 CDN을 사용합니다. 배포 환경에서 외부 CDN 차단 정책이 있다면 해당 리소스만 별도 호스팅해야 합니다.
