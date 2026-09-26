@@ -1,0 +1,27 @@
+THE RE:FINE 네이버/메인 캐러셀 적용 내역
+
+1. index.html <head> 상단
+- Naver 검색 캐러셀용 ItemList JSON-LD 1개 추가
+- ListItem 5개 / position, name, image, url 적용
+- 이미지 URL과 이동 URL 모두 절대 URL 사용
+
+2. 메인 화면
+- 히어로 바로 아래 5장 프로그램 캐러셀 추가
+- 좌우 버튼 / 숫자 카운트 / 모바일 스와이프 / 키보드 좌우키 지원
+
+3. 폴더링
+- CSS: assets/css/carousel.css
+- JS: assets/js/carousel.js
+- 이미지: assets/images/carousel/
+
+4. 적용 이미지
+- refine-signature.jpg
+- acne-focus-program.jpg
+- premium-program.jpg
+- personal-face-curation.jpg
+- bridal-care.png
+
+5. 기존 사이트
+- 기존 BeautySalon/WebSite/WebPage JSON-LD 유지
+- 기존 홈/페이지 CSS, JS 구조 유지
+- 기존 Journal Owl Carousel의 인라인 CSS/JS는 carousel.css / carousel.js로 분리
